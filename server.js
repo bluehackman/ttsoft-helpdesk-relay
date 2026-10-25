@@ -51,10 +51,11 @@ wss.on('connection', (ws, req) => {
 
     ws.on('message', (data, isBinary) => {
         // If already paired with a peer, pipe all traffic with maximum speed
-        if (peerWs && peerWs.readyState === WebSocket.OPEN) {
-            peerWs.send(data, { binary: isBinary });
-            return;
-        }
+      const target = ws.peerWs || peerWs;
+if (target && target.readyState === WebSocket.OPEN) {
+    target.send(data, { binary: isBinary });
+    return;
+}
 
         // Before pairing, handle JSON control messages
         if (!isBinary) {
